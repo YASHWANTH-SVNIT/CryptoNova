@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Portfolio | {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/portfolio.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>My Portfolio</h1>
+    <div class="portfolio-summary card">
+        <h2>Total Portfolio Value:</h2>
+        <p class="portfolio-value">₹{{ portfolio_value|floatformat:2 }}</p>
+    </div>
+
+    <section class="holdings-section card">
+        <h3>Holdings</h3>
+        {% if holdings %}
+            <table class="holdings-table">
+                <thead>
+                    <tr>
+                        <th>Coin</th>
+                        <th>Quantity</th>
+                        <th>Avg Buy Price (INR)</th>
+                        <th>Current Price (INR)</th>
+                        <th>Current Value (INR)</th>
+                        <th>Profit/Loss (INR)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for coin_id, data in holdings.items %}
+                    <tr>
+                        <td>{{ data.coin_name }} ({{ data.coin_symbol|upper }})</td>
+                        <td>{{ data.quantity|floatformat:4 }}</td>
+                        <td>₹{{ data.total_spent|floatformat:2 }}</td>
+                        <td>₹{{ data.current_price|floatformat:2 }}</td>
+                        <td>₹{{ data.current_value|floatformat:2 }}</td>
+                        <td class="{% if data.profit_loss >= 0 %}positive{% else %}negative{% endif %}">
+                            ₹{{ data.profit_loss|floatformat:2 }}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>You don't have any holdings yet.</p>
+        {% endif %}
+    </section>
+
+    <section class="transactions-section card">
+        <h3>Transaction History</h3>
+        {% if transactions %}
+            <table class="transactions-table">
+                <thead>
+                    <tr>
+                        <th>Date</th>
+                        <th>Coin</th>
+                        <th>Type</th>
+                        <th>Quantity</th>
+                        <th>Price (INR)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for tx in transactions %}
+                    <tr>
+                        <td>{{ tx.created_at_ist|date:"d M Y H:i" }}</td>
+                        <td>{{ tx.coin_name }} ({{ tx.coin_symbol|upper }})</td>
+                        <td>{{ tx.transaction_type }}</td>
+                        <td>{{ tx.quantity|floatformat:4 }}</td>
+                        <td>₹{{ tx.price_inr|floatformat:2 }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No transactions yet.</p>
+        {% endif %}
+    </section>
+</div>
+{% endblock %}

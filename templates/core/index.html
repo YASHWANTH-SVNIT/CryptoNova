@@ -1,0 +1,184 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load humanize %}
+
+{% block title %}Dashboard | {{ block.super }}{% endblock %}
+
+{% block extra_head %}
+{% endblock %}
+
+{% block content %}
+<div class="container">
+    {% if api_errors %}
+        <div class="alert alert-danger" role="alert">
+            <strong>Warning:</strong> Could not fetch some market data. Features might be limited.
+            <ul>
+                {% for error in api_errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
+
+    <section class="overview-section card mb-4">
+        <div class="card-header">
+            <h2>Market Overview</h2>
+        </div>
+        <div class="card-body">
+            <div class="overview-stats">
+                <p>Total Market Cap (INR): <strong>{{ global_data.total_market_cap_inr|floatformat:0|intcomma|default:"N/A" }}</strong></p>
+                <p>24h Market Cap Change:
+                    {% with change_value=global_data.market_cap_change_percentage_24h %}
+                        <span class="{% if change_value|default:0.0 >= 0 %}positive{% else %}negative{% endif %}">
+                            {% if change_value is not None %}
+                                {{ change_value|floatformat:2 }}%
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </span>
+                    {% endwith %}
+                </p>
+               
+            </div>
+
+            {# Market Overview Chart #}
+            <h4 class="mt-3">Market Trend (<span id="chart-coin-name">Bitcoin</span>)</h4>
+            <div class="chart-toggle mb-2">
+                <button class="btn btn-sm btn-chart-range active" data-days="1" data-coin="bitcoin">1D</button>
+                <button class="btn btn-sm btn-chart-range" data-days="7" data-coin="bitcoin">7D</button>
+                <button class="btn btn-sm btn-chart-range" data-days="30" data-coin="bitcoin">1M</button>
+                <button class="btn btn-sm btn-chart-range" data-days="365" data-coin="bitcoin">1Y</button>
+            </div>
+            <div class="chart-container overview-chart-container" style="height: 350px;">
+                <canvas id="marketOverviewChart"></canvas>
+                <div class="chart-loading" style="display: none; text-align: center; padding: 20px;">Loading chart data...</div>
+            </div>
+        </div>
+    </section>
+
+    <div class="homepage-grid">
+        {# --- Trending Coins Section --- #}
+        <section class="trending-coins card">
+            <div class="card-header d-flex justify-content-between align-items-center">j
+                <h3>Trending Coins</h3>
+                <i class="fas fa-fire" style="color: orange;"></i>
+            </div>
+            <div class="card-body">
+                {% if trending_coins %}
+                    <ul class="coin-list">
+                        {% for coin in trending_coins %}
+                            <li>
+                                <a href="{% url 'markets:detail' coin.id %}" class="coin-link">
+                                    <div class="coin-info">
+                                        <img src="{{ coin.thumb }}" alt="{{ coin.name }} logo" width="24" height="24" loading="lazy">
+                                        <div>
+                                            <span class="coin-name">{{ coin.name }}</span>
+                                            <span class="coin-symbol">{{ coin.symbol }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="coin-price">
+                                        {{ coin.current_price|floatformat:2|intcomma|default:"N/A" }} INR
+                                        {% if coin.price_change_percentage_24h is not None %}
+                                            <span class="coin-change {% if coin.price_change_percentage_24h >= 0 %}positive{% else %}negative{% endif %}">
+                                                ({{ coin.price_change_percentage_24h|floatformat:2 }}%)
+                                            </span>
+                                        {% endif %}
+                                    </div>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">Could not load trending coins data.</p>
+                {% endif %}
+                <a href="{% url 'markets:list' %}" class="view-more-link">View More <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </section>
+
+        {# --- Market Movers Section --- #}
+        <section class="market-movers card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3>Market Movers (24h)</h3>
+                <i class="fas fa-exchange-alt" style="color: var(--primary-color);"></i>
+            </div>
+            <div class="card-body">
+                {% if market_movers %}
+                    <ul class="coin-list">
+                        {% for coin in market_movers %}
+                            <li>
+                                <a href="{% url 'markets:detail' coin.id %}" class="coin-link">
+                                    <div class="coin-info">
+                                        <img src="{{ coin.image }}" alt="{{ coin.name }} logo" width="24" height="24" loading="lazy">
+                                        <div>
+                                            <span class="coin-name">{{ coin.name }}</span>
+                                            <span class="coin-symbol">{{ coin.symbol }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="coin-stats">
+                                        <span class="coin-price">{{ coin.current_price|floatformat:2|intcomma|default:"N/A" }} INR</span>
+                                        <span class="coin-change {% if coin.price_change_percentage_24h|default:0.0 >= 0 %}positive{% else %}negative{% endif %}">
+                                            {{ coin.price_change_percentage_24h|floatformat:2|default:"N/A" }}%
+                                        </span>
+                                    </div>
+                                </a>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">Could not load market movers data.</p>
+                {% endif %}
+                <a href="{% url 'markets:list' %}" class="view-more-link">View Full Market <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </section>
+
+        {# --- Crypto News Section --- #}
+        <section class="crypto-news card">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3>Latest News</h3>
+                <i class="fas fa-newspaper" style="color: #17a2b8;"></i>
+            </div>
+            <div class="card-body">
+                {% if news_articles %}
+                    <ul class="news-list">
+                        {% for article in news_articles %}
+                            <li class="news-item">
+                                <h5><a href="{{ article.url }}" target="_blank" rel="noopener noreferrer">{{ article.title }}</a></h5>
+                                <small class="text-muted">Source: {{ article.source }} - {{ article.published_at|naturaltime }}</small>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p class="text-muted">News headlines loading soon...</p>
+                    <ul class="news-list">
+                        <li class="news-item">
+                            <h5><a href="#" target="_blank" rel="noopener noreferrer">Bitcoin Hits New High Amid Market Optimism</a></h5>
+                            <small class="text-muted">Source: CryptoNews.com - 2 hours ago</small>
+                        </li>
+                        <li class="news-item">
+                            <h5><a href="#" target="_blank" rel="noopener noreferrer">Ethereum Upgrade 'Dencun' Goes Live Successfully</a></h5>
+                            <small class="text-muted">Source: CoinDesk - 5 hours ago</small>
+                        </li>
+                        <li class="news-item">
+                            <h5><a href="#" target="_blank" rel="noopener noreferrer">Regulatory Update: SEC Delays Decision on Spot ETF</a></h5>
+                            <small class="text-muted">Source: Reuters - 8 hours ago</small>
+                        </li>
+                    </ul>
+                {% endif %}
+                <a href="#" class="view-more-link">More News <i class="fas fa-arrow-right"></i></a>
+            </div>
+        </section>
+    </div> {# End homepage-grid #}
+</div> {# End container #}
+{% endblock %}
+
+{% block extra_scripts %}
+    <script src="{% static 'js/charts-home.js' %}"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const initialCoinId = '{{ initial_chart_coin_id }}';
+            const chartApiUrl = "{% url 'core:market_chart_data_api' %}";
+            initializeOverviewChart(initialCoinId, chartApiUrl);
+        });
+    </script>
+{% endblock %}
+

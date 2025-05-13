@@ -1,0 +1,309 @@
+/* markets.css */
+
+.markets-header {
+    margin-bottom: 2rem;
+    text-align: center;
+    animation: fadeInDown 0.8s ease-out;
+}
+ 
+.markets-header h1 {
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+}
+
+.markets-header p {
+    color: var(--text-secondary);
+    font-size: 1.1rem;
+}
+
+.markets-filter {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: var(--card-bg);
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    animation: fadeIn 1s ease-out;
+}
+
+.search-box {
+    display: flex;
+    width: 300px;
+}
+
+.search-box input {
+    flex-grow: 1;
+    padding: 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px 0 0 4px;
+    font-size: 1rem;
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+}
+
+.search-box input:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2);
+}
+
+.search-box button {
+    padding: 0.8rem 1rem;
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+    border-radius: 0 4px 4px 0;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.search-box button:hover {
+    background-color: var(--primary-color-dark);
+}
+
+.filter-options select {
+    padding: 0.8rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 1rem;
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.filter-options select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(var(--primary-color-rgb), 0.2);
+}
+
+.markets-table-container {
+    overflow-x: auto;
+    margin-bottom: 2rem;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    animation: fadeInUp 1s ease-out;
+}
+
+.markets-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+    background-color: var(--card-bg);
+}
+
+.markets-table th {
+    padding: 1.2rem 1rem;
+    background-color: var(--table-header-bg);
+    color: var(--text-primary);
+    font-weight: 600;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+
+.markets-table td {
+    padding: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    color: var(--text-primary);
+}
+
+.markets-table tbody tr {
+    transition: background-color 0.3s ease;
+}
+
+.markets-table tbody tr:hover {
+    background-color: var(--hover-bg);
+    cursor: pointer;
+}
+
+.coin-info {
+    display: flex;
+    align-items: center;
+}
+
+.coin-logo {
+    width: 30px;
+    height: 30px;
+    margin-right: 1rem;
+    border-radius: 50%;
+}
+
+.coin-name-container {
+    display: flex;
+    flex-direction: column;
+}
+
+.coin-name {
+    font-weight: 600;
+    color: var(--text-primary);
+}
+
+.coin-symbol {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    margin-top: 0.2rem;
+}
+
+.coin-price {
+    font-weight: 600;
+}
+
+.coin-change {
+    font-weight: 600;
+}
+
+.coin-change.positive {
+    color: var(--success-color);
+}
+
+.coin-change.negative {
+    color: var(--danger-color);
+}
+
+.coin-volume, .coin-market-cap {
+    color: var(--text-secondary);
+}
+
+.pagination-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    animation: fadeIn 1.2s ease-out;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+}
+
+.pagination button {
+    padding: 0.7rem 1.2rem;
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin: 0 0.5rem;
+}
+
+.pagination button:hover:not([disabled]) {
+    background-color: var(--primary-color);
+    color: white;
+    border-color: var(--primary-color);
+}
+
+.pagination button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#currentPage {
+    padding: 0.7rem 1rem;
+    background-color: var(--card-bg);
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.page-size {
+    display: flex;
+    align-items: center;
+}
+
+.page-size label {
+    margin-right: 0.5rem;
+    color: var(--text-secondary);
+}
+
+.page-size select {
+    padding: 0.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    background-color: var(--input-bg);
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.error-message, .loading-message {
+    text-align: center;
+    padding: 2rem;
+    color: var(--danger-color);
+}
+
+.loading-message {
+    color: var(--text-secondary);
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeInDown {
+    from { 
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInUp {
+    from { 
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to { 
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive adjustments */
+@media (max-width: 992px) {
+    .markets-filter {
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .search-box {
+        width: 100%;
+    }
+    
+    .filter-options {
+        width: 100%;
+    }
+    
+    .filter-options select {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    .markets-table th:nth-child(5),
+    .markets-table td:nth-child(5) {
+        display: none;
+    }
+    
+    .pagination-container {
+        flex-direction: column;
+        gap: 1rem;
+    }
+}
+
+@media (max-width: 576px) {
+    .markets-table th:nth-child(6),
+    .markets-table td:nth-child(6) {
+        display: none;
+    }
+}

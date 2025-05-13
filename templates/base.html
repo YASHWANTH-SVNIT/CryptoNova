@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+{% load static %} 
+<html lang="en" data-theme="light"> 
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}CRYPTONOVA{% endblock %}</title> {# Allow specific page titles #}
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    {# Link to Global CSS (from core app's static folder) #}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    {% block extra_head %}
+    {# Placeholder for page-specific head elements (like chart.js script for specific pages) #}
+    {% endblock %}
+    {% block extra_js %} {% endblock  %}
+    {% block extra_css %} {% endblock  %}
+
+</head>
+<body>
+    <header class="main-header">
+        <nav class="navbar container"> 
+            <div class="nav-left">
+                <a href="{% url 'core:index' %}" class="logo">
+                    <span>CRYPTONOVA</span>
+                </a>
+                <ul class="nav-links">
+                    <li><a href="{% url 'markets:list' %}">Markets</a></li>
+                    <li><a href="{% url 'portfolio:detail' %}">Portfolio</a></li>
+                    <li><a href="{% url 'learn:index' %}">Learn</a></li>
+                </ul>
+            </div>
+            <div class="nav-right">
+                <button id="theme-toggle" class="theme-toggle-btn" aria-label="Toggle light/dark mode">
+                    <i class="fas fa-sun"></i> 
+                    <i class="fas fa-moon" style="display: none;"></i> 
+                </button>
+                <div class="auth-links">
+                    {% if user.is_authenticated %}
+                        <span class="welcome-user">Hi, {{ user.username }}</span>
+                        <a href="{% url 'portfolio:detail' %}" class="nav-button">Portfolio</a>
+                        <a href="{% url 'accounts:logout' %}" class="nav-button nav-button-secondary">Logout</a>
+                    {% else %}
+                        <a href="{% url 'accounts:login' %}" class="nav-button">Login</a>
+                        <a href="{% url 'accounts:signup' %}" class="nav-button nav-button-primary">Sign Up</a>
+                    {% endif %}
+                </div>
+                 <button class="mobile-menu-toggle" aria-label="Toggle Menu"><i class="fas fa-bars"></i></button>
+            </div>
+        </nav>
+         <div class="mobile-nav-links"> 
+             <ul>
+                 <li><a href="{% url 'markets:list' %}">Markets</a></li>
+                 <li><a href="{% url 'portfolio:detail' %}">Portfolio</a></li>
+                 <li><a href="{% url 'learn:index' %}">Learn</a></li>
+                 <hr>
+                 {% if user.is_authenticated %}
+                    <li><a href="{% url 'portfolio:detail' %}">My Portfolio</a></li>
+                    <li><a href="{% url 'accounts:logout' %}">Logout</a></li>
+                 {% else %}
+                    <li><a href="{% url 'accounts:login' %}">Login</a></li>
+                    <li><a href="{% url 'accounts:signup' %}">Sign Up</a></li>
+                 {% endif %}
+             </ul>
+         </div>
+    </header>
+
+    <main class="main-content">
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="main-footer">
+        <div class="footer-content container"> 
+            <div class="footer-section about">
+                <h4>CRYPTONOVA</h4>
+                <p>Your gateway to the world of cryptocurrency. Invest, learn, and grow your portfolio.</p>
+                 <div class="social-links">
+                    <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="#" aria-label="Twitter"><i class="fab fa-twitter"></i></a>
+                    <a href="#" aria-label="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
+                 </div>
+            </div>
+            <div class="footer-section links">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="#">About Us</a></li> 
+                    <li><a href="#">Privacy Policy</a></li> 
+                    <li><a href="#">Terms of Service</a></li>
+                    <li><a href="#">Contact</a></li>
+                     <li><a href="{% url 'learn:index' %}">Learn Crypto</a></li>
+                </ul>
+            </div>
+            <div class="footer-section contact">
+                <h4>Contact Us</h4>
+                <ul>
+                    <li><span><i class="fas fa-envelope"></i> info@cryptonova.example.com</span></li>
+                    <li><span><i class="fas fa-phone"></i> +91 12345 67890</span></li>
+                </ul>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © {% now "Y" %} CRYPTONOVA | All rights reserved. | Made with <i class="fas fa-heart" style="color: var(--danger-color);"></i>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+    <script src="{% static 'js/main.js' %}"></script>
+
+    {% block extra_scripts %}
+    
+    {% endblock %}
+</body>
+</html>

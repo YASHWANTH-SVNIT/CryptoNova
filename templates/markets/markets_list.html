@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Markets | {{ block.super }}{% endblock %}
+
+{% block extra_css %}
+    <link rel="stylesheet" href="{% static 'css/markets.css' %}">
+{% endblock  %}
+
+{% block content %}
+<div class="container">
+    <div class="markets-header">
+        <h1>Cryptocurrency Markets</h1>
+        <p>Track prices, market cap, and more for the top cryptocurrencies</p>
+    </div>
+
+    <div class="markets-filter">
+        <div class="search-box">
+            <input type="text" id="coinSearch" placeholder="Search cryptocurrency...">
+            <button id="searchBtn"><i class="fas fa-search"></i></button>
+        </div>
+        <div class="filter-options">
+            <select id="sortBy">
+                <option value="market_cap_desc">Market Cap (High to Low)</option>
+                <option value="market_cap_asc">Market Cap (Low to High)</option>
+                <option value="price_desc">Price (High to Low)</option>
+                <option value="price_asc">Price (Low to High)</option>
+                <option value="volume_desc">Volume (High to Low)</option>
+                <option value="change_desc">24h Change (High to Low)</option>
+                <option value="change_asc">24h Change (Low to High)</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="markets-table-container">
+        <table class="markets-table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Coin</th>
+                    <th>Price</th>
+                    <th>24h Change</th>
+                    <th>24h Volume</th>
+                    <th>Market Cap</th>
+                </tr>
+            </thead>
+            <tbody id="marketsTableBody">
+                {% if error_message %}
+                <tr>
+                    <td colspan="6" class="error-message">{{ error_message }}</td>
+                </tr>
+                {% else %}
+                {% if coins %}
+                    {% for coin in coins %}
+                    <tr data-coin-id="{{ coin.id }}" class="coin-row">
+                        <td>{{ coin.market_cap_rank }}</td>
+                        <td class="coin-info">
+                            <img src="{{ coin.image }}" alt="{{ coin.name }}" class="coin-logo">
+                            <div class="coin-name-container">
+                                <span class="coin-name">{{ coin.name }}</span>
+                                <span class="coin-symbol">{{ coin.symbol|upper }}</span>
+                            </div>
+                        </td>
+                        <td class="coin-price">₹{{ coin.current_price|floatformat:2 }}</td>
+                        <td class="coin-change {% if coin.price_change_percentage_24h < 0 %}negative{% else %}positive{% endif %}">
+                            {% if coin.price_change_percentage_24h < 0 %}
+                                <i class="fas fa-caret-down"></i>
+                            {% else %}
+                                <i class="fas fa-caret-up"></i>
+                            {% endif %}
+                            {{ coin.price_change_percentage_24h|floatformat:2 }}%
+                        </td>
+                        <td class="coin-volume">₹{{ coin.total_volume|floatformat:0 }}</td>
+                        <td class="coin-market-cap">₹{{ coin.market_cap|floatformat:0 }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="loading-message">Loading cryptocurrency data...</td>
+                    </tr>
+                {% endif %}
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="pagination-container">
+        <div class="pagination">
+            <button id="prevPage" {% if not prev_page %}disabled{% endif %}><i class="fas fa-chevron-left"></i> Previous</button>
+            <span id="currentPage">Page {{ current_page }} of {{ total_pages }}</span>
+            <button id="nextPage" {% if not next_page %}disabled{% endif %}>Next <i class="fas fa-chevron-right"></i></button>
+        </div>
+        <div class="page-size">
+            <label for="pageSize">Show:</label>
+            <select id="pageSize">
+                <option value="25" {% if page_size == 25 %}selected{% endif %}>25</option>
+                <option value="50" {% if page_size == 50 %}selected{% endif %}>50</option>
+                <option value="100" {% if page_size == 100 %}selected{% endif %}>100</option>
+            </select>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/markets.js' %}"></script>
+{% endblock %}

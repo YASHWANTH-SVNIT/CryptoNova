@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}{{ coin.name|default:"Coin Detail" }} ({{ coin.symbol|upper|default:"N/A" }}) - CryptoNova{% endblock %}
+{% block  extra_css%}
+<link rel="stylesheet" href="{% static 'css/coin_detail.css' %}">
+{% endblock  %}
+{% block extra_head %}
+ 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="{% static 'js/coin_detail.js' %}" defer></script>
+{% endblock %}
+
+{% block content %}
+<div class="coin-container">
+
+    {% if coin %}
+    <!-- Coin Details -->
+    <div class="coin-details card">
+        {% if coin.image.large %}
+        <img src="{{ coin.image.large }}" alt="{{ coin.name }} logo" class="coin-logo">
+        {% endif %}
+        <h1>{{ coin.name }} ({{ coin.symbol|upper }})</h1>
+        {% if coin.market_cap_rank %}
+        <span class="rank">Rank #{{ coin.market_cap_rank }}</span>
+        {% endif %}
+        <div class="price">
+            {% if coin.market_data.current_price.inr is not None %}
+                ₹{{ coin.market_data.current_price.inr|floatformat:2 }}
+            {% else %}
+                N/A
+            {% endif %}
+        </div>
+        <div class="price-change">
+            {% if coin.market_data.price_change_percentage_24h_in_currency.inr is not None %}
+                {% if coin.market_data.price_change_percentage_24h_in_currency.inr > 0 %}
+                    <span class="positive">+{{ coin.market_data.price_change_percentage_24h_in_currency.inr|floatformat:2 }}%</span>
+                {% elif coin.market_data.price_change_percentage_24h_in_currency.inr < 0 %}
+                    <span class="negative">{{ coin.market_data.price_change_percentage_24h_in_currency.inr|floatformat:2 }}%</span>
+                {% else %}
+                    <span class="neutral">{{ coin.market_data.price_change_percentage_24h_in_currency.inr|floatformat:2 }}%</span>
+                {% endif %}
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Graph Section -->
+    <div class="graph-section card">
+        <h2>Market Trends</h2>
+        <canvas id="marketChart"></canvas>
+    </div>
+
+    <!-- Buy/Sell Section -->
+    <div class="buy-sell card">
+        <h2>Trade {{ coin.symbol|upper }}</h2>
+        {% if user.is_authenticated %}
+        <form method="POST">
+            {% csrf_token %}
+            <input type="number" step="any" min="0" name="quantity" placeholder="Enter quantity" required class="input-field">
+            <div class="button-group">
+                <button type="submit" name="transaction_type" value="BUY" class="btn buy-btn">Buy</button>
+                <button type="submit" name="transaction_type" value="SELL" class="btn sell-btn">Sell</button>
+            </div>
+            <p class="note">Simulated transaction at current market price.</p>
+        </form>
+        {% else %}
+        <p>Please <a href="{% url 'accounts:login' %}?next={{ request.path }}">login</a> or <a href="{% url 'accounts:signup' %}">sign up</a> to trade.</p>
+        {% endif %}
+    </div>
+
+    {% else %}
+    <div class="error-message">
+        <h4>Error loading coin data!</h4>
+        <p><a href="{% url 'markets:list' %}">Return to Markets</a></p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

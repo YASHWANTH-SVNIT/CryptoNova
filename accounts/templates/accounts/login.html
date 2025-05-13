@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+
+{% block title %}Login | {{ block.super }}{% endblock %}
+
+{% block content %}
+<div class="container" style="max-width: 500px; margin-top: 3rem;">
+    <div class="card">
+        <div class="card-header text-center">
+            <h2>Login to CRYPTONOVA</h2>
+        </div>
+        <div class="card-body">
+            {# --- Display Messages --- #}
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> {# Needs Bootstrap JS for dismiss #}
+                    </div>
+                {% endfor %}
+            {% endif %}
+             {% if error %} {# Specific error from view context #}
+                 <div class="alert alert-danger">{{ error }}</div>
+             {% endif %}
+
+
+            <form method="post" action="{% url 'accounts:login' %}">
+                {% csrf_token %}
+                {# --- Replace with Django Form rendering later --- #}
+                <div class="mb-3">
+                    <label for="username" class="form-label">Username</label>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                 {# --- Add Remember Me & Forgot Password links later --- #}
+                 <div class="d-grid"> {# Makes button full width #}
+                    <button type="submit" class="btn nav-button-primary">Login</button>
+                 </div>
+                 {# Hidden 'next' field if redirected here #}
+                 <input type="hidden" name="next" value="{{ request.GET.next }}">
+            </form>
+             <hr>
+            <div class="text-center">
+                <p>Don't have an account? <a href="{% url 'accounts:signup' %}">Sign Up</a></p>
+                {# <p><a href="#">Forgot Password?</a></p> #}
+            </div>
+        </div>
+    </div>
+</div>
+{# Basic form-control styling (add if not using a framework like Bootstrap) #}
+<style>
+    .form-label { font-weight: 600; margin-bottom: 0.5rem; display: block;}
+    .form-control {
+        display: block;
+        width: 100%;
+        padding: 0.5rem 0.75rem;
+        font-size: 1rem;
+        font-weight: 400;
+        line-height: 1.5;
+        color: var(--on-background-color);
+        background-color: var(--background-color);
+        background-clip: padding-box;
+        border: 1px solid var(--border-color);
+        appearance: none;
+        border-radius: var(--border-radius);
+        transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+    .form-control:focus {
+         border-color: var(--primary-color);
+         outline: 0;
+         box-shadow: 0 0 0 0.2rem rgba(var(--primary-color-rgb), 0.25); /* Needs --primary-color-rgb variable */
+    }
+    .mb-3 { margin-bottom: 1rem !important; }
+    .d-grid { display: grid; }
+    .btn-close { /* Basic styling for close button if not using Bootstrap JS */
+        float: right; background: none; border: none; font-size: 1.2rem; cursor: pointer; opacity: 0.7;
+    }
+</style>
+{% endblock %}
